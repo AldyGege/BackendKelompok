@@ -4,7 +4,10 @@ const {body, validationResult} = require('express-validator');
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const cors = require('cors')
 const connection = require('../config/database');
+const app = express();
+app.use(cors());
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
