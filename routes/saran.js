@@ -1,10 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {body, validationResult} = require('express-validator');
-const cors = require('cors')
 const connection = require('../config/database');
-const app = express();
-app.use(cors())
 
 router.get('/', function (req, res){
     connection.query('SELECT s.id_saran, s.isi_saran, s.id_user, u.nama_user FROM saran s JOIN user u ON s.id_user = u.id_user', function(err, rows){
