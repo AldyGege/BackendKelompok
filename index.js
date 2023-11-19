@@ -12,11 +12,11 @@ const bodyPs = require('body-parser');
 app.use(bodyPs.urlencoded({extended: false}));
 app.use(bodyPs.json());
 
-// const AdminRouter = require('./routes/admin.js');
-// app.use('/api/admin', AdminRouter);
+const AdminRouter = require('./routes/admin.js');
+app.use('/api/admin', AdminRouter);
 
-// const UserRouter = require('./routes/user.js');
-// app.use('/api/user', UserRouter);
+const UserRouter = require('./routes/user.js');
+app.use('/api/user', UserRouter);
 
 const BeritaRouter = require('./routes/berita.js');
 app.use('/api/berita', BeritaRouter);

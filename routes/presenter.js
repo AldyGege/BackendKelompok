@@ -53,7 +53,6 @@ router.post('/store', upload.single("file_presenter"), [
         });
     }
     let Data = {
-        id_presenter: req.body.id_presenter,
         nama_presenter: req.body.nama_presenter,
         no_hp: req.body.no_hp,
         gender: req.body.gender,
