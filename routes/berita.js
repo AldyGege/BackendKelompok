@@ -24,7 +24,9 @@ const fileFilter = (req, file, cb) => {
 };
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
-router.get('/', function (req, res){
+const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+
+router.get('/', authenticateToken ,function (req, res){
     connection.query('SELECT b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -41,7 +43,7 @@ router.get('/', function (req, res){
     })
 });
 
-router.post('/store', upload.single("file_berita"), [
+router.post('/store', authenticateToken, upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
     body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
@@ -78,7 +80,7 @@ router.post('/store', upload.single("file_berita"), [
     })
 });
 
-router.get('/(:id)', function (req, res) {
+router.get('/(:id)', authenticateToken, function (req, res) {
     let id = req.params.id;
     connection.query(`SELECT b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin where id_berita = ${id}`, function (err, rows) {
         if(err){
@@ -103,7 +105,7 @@ router.get('/(:id)', function (req, res) {
     })
 });
 
-router.patch('/update/:id', upload.single("file_berita"), [
+router.patch('/update/:id',authenticateToken,  upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
     body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
@@ -153,7 +155,7 @@ router.patch('/update/:id', upload.single("file_berita"), [
                 message: 'Server Error'
             })
         }else{
-            return res.status(500).json({
+            return res.status(200).json({
                 status: true,
                 message: 'Update Success..!'
             })
@@ -163,7 +165,7 @@ router.patch('/update/:id', upload.single("file_berita"), [
 
 });
 
-router.delete('/delete/(:id)', function(req, res) {
+router.delete('/delete/(:id)', authenticateToken, function(req, res) {
     let id = req.params.id;
     connection.query(`delete from berita where id_berita = ${id}`, function(err, rows) {
         if(err){

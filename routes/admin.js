@@ -24,7 +24,9 @@ const fileFilter = (req, file, cb) => {
 };
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
-router.get('/', function (req, res){
+const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+
+router.get('/', authenticateToken, function (req, res){
     connection.query('select * from admin order by id_admin desc', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -41,7 +43,7 @@ router.get('/', function (req, res){
     })
 });
 
-router.post('/store', upload.single("file_admin"), [
+router.post('/store', authenticateToken, upload.single("file_admin"), [
     body('nama_admin').notEmpty(),
     body('no_hp').notEmpty(),
     body('email_admin').notEmpty(),
@@ -80,7 +82,7 @@ router.post('/store', upload.single("file_admin"), [
     })
 });
 
-router.get('/(:id)', function (req, res) {
+router.get('/(:id)', authenticateToken, function (req, res) {
     let id = req.params.id;
     connection.query(`select * from admin where id_admin = ${id}`, function (err, rows) {
         if(err){
@@ -105,7 +107,7 @@ router.get('/(:id)', function (req, res) {
     })
 });
 
-router.patch('/update/:id', upload.single("file_admin"), [
+router.patch('/update/:id', authenticateToken, upload.single("file_admin"), [
     body('nama_admin').notEmpty(),
     body('no_hp').notEmpty(),
     body('email_admin').notEmpty(),
@@ -157,7 +159,7 @@ router.patch('/update/:id', upload.single("file_admin"), [
                 message: 'Server Error'
             })
         }else{
-            return res.status(500).json({
+            return res.status(200).json({
                 status: true,
                 message: 'Update Success..!'
             })
@@ -167,7 +169,7 @@ router.patch('/update/:id', upload.single("file_admin"), [
 
 });
 
-router.delete('/delete/(:id)', function(req, res) {
+router.delete('/delete/(:id)', authenticateToken, function(req, res) {
     let id = req.params.id;
     connection.query(`delete from admin where id_admin = ${id}`, function(err, rows) {
         if(err){

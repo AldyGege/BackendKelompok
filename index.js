@@ -4,7 +4,7 @@ const port = 3000
 const cors = require('cors')
 app.use(cors())
 const path = require('path')
-app.use('/static', express.static(path.join(__dirname, 'public/images')))
+app.use('/static', express.static(path.join(__dirname, 'public/image')))
 
 
 
@@ -26,6 +26,9 @@ app.use('/api/presenter', PresenterRouter);
 
 const SaranRouter = require('./routes/saran.js');
 app.use('/api/saran', SaranRouter);
+
+const auth = require('./routes/auth/auth')
+app.use('api/auth', auth);
 
 app.listen(port, () => {
     console.log(`aplikasi berjalan di http:://localhost:${port}`)

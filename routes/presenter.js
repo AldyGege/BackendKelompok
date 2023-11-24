@@ -24,7 +24,9 @@ const fileFilter = (req, file, cb) => {
 };
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
-router.get('/', function (req, res){
+const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+
+router.get('/', authenticateToken, function (req, res){
     connection.query('select * from presenter order by id_presenter desc', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -41,7 +43,7 @@ router.get('/', function (req, res){
     })
 });
 
-router.post('/store', upload.single("file_presenter"), [
+router.post('/store', authenticateToken, upload.single("file_presenter"), [
     body('nama_presenter').notEmpty(),
     body('no_hp').notEmpty(),
     body('gender').notEmpty()
@@ -74,7 +76,7 @@ router.post('/store', upload.single("file_presenter"), [
     })
 });
 
-router.get('/(:id)', function (req, res) {
+router.get('/(:id)', authenticateToken, function (req, res) {
     let id = req.params.id;
     connection.query(`select * from presenter where id_presenter = ${id}`, function (err, rows) {
         if(err){
@@ -99,7 +101,7 @@ router.get('/(:id)', function (req, res) {
     })
 });
 
-router.patch('/update/:id', upload.single("file_presenter"), [
+router.patch('/update/:id', authenticateToken, upload.single("file_presenter"), [
     body('nama_presenter').notEmpty(),
     body('no_hp').notEmpty(),
     body('gender').notEmpty()
@@ -145,7 +147,7 @@ router.patch('/update/:id', upload.single("file_presenter"), [
                 message: 'Server Error'
             })
         }else{
-            return res.status(500).json({
+            return res.status(200).json({
                 status: true,
                 message: 'Update Success..!'
             })
@@ -155,7 +157,7 @@ router.patch('/update/:id', upload.single("file_presenter"), [
 
 });
 
-router.delete('/delete/(:id)', function(req, res) {
+router.delete('/delete/(:id)', authenticateToken, function(req, res) {
     let id = req.params.id;
     connection.query(`delete from presenter where id_presenter = ${id}`, function(err, rows) {
         if(err){

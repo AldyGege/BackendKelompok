@@ -3,7 +3,9 @@ const router = express.Router();
 const {body, validationResult} = require('express-validator');
 const connection = require('../config/database');
 
-router.get('/', function (req, res){
+const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+
+router.get('/', authenticateToken, function (req, res){
     connection.query('SELECT s.id_saran, s.isi_saran, s.id_user, u.nama_user FROM saran s JOIN user u ON s.id_user = u.id_user', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -20,7 +22,7 @@ router.get('/', function (req, res){
     })
 });
 
-router.post('/store', [
+router.post('/store', authenticateToken, [
     body('id_user').notEmpty(),
     body('isi_saran').notEmpty()
 ],(req, res) => {
@@ -50,7 +52,7 @@ router.post('/store', [
     })
 });
 
-router.get('/(:id)', function (req, res) {
+router.get('/(:id)', authenticateToken, function (req, res) {
     let id = req.params.id;
     connection.query(`SELECT s.id_saran, s.isi_saran, s.id_user, u.nama_user FROM saran s JOIN user u ON s.id_user = u.id_user
     where id_saran = ${id}`, function (err, rows) {
@@ -76,7 +78,7 @@ router.get('/(:id)', function (req, res) {
     })
 });
 
-router.patch('/update/:id', [
+router.patch('/update/:id', authenticateToken, [
     body('id_user').notEmpty(),
     body('isi_saran').notEmpty()
 ], (req, res) => {
@@ -98,7 +100,7 @@ router.patch('/update/:id', [
                 message: 'Server Error'
             })
         }else{
-            return res.status(500).json({
+            return res.status(200).json({
                 status: true,
                 message: 'Update Success..!'
             })
@@ -106,7 +108,7 @@ router.patch('/update/:id', [
     })
 });
 
-router.delete('/delete/(:id)', function(req, res) {
+router.delete('/delete/(:id)', authenticateToken, function(req, res) {
     let id = req.params.id;
     connection.query(`delete from saran where id_saran = ${id}`, function(err, rows) {
         if(err){

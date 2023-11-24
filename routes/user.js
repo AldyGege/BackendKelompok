@@ -157,7 +157,7 @@ router.patch('/update/:id', upload.single("file_user"), [
                 message: 'Server Error'
             })
         }else{
-            return res.status(500).json({
+            return res.status(200).json({
                 status: true,
                 message: 'Update Success..!'
             })
