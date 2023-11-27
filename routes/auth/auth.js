@@ -42,17 +42,20 @@ router.post("/register", upload.single("file_user"),[
     const { nama_user, no_hp, email_user, gender, ttl, pw_user } = req.body;
     file_user = req.file.filename;
     const checkUserQuery = "SELECT * FROM user WHERE email_user = ?";
-    connection.query(checkUserQuery, [username], (err, results) => {
+    connection.query(checkUserQuery, [email_user], (err, results) => {
       if (err) {
         return res.status(500).json({ error: "Server Error" });
       }
       if (results.length > 0) {
         return res.status(409).json({ error: "Pengguna sudah terdaftar" });
       }
-      const insertUserQuery = "INSERT INTO users (nama_user, no_hp, email_user, gender, ttl, pw_user, file_user) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      const insertUserQuery = "INSERT INTO user (nama_user, no_hp, email_user, gender, ttl, pw_user, file_user) VALUES (?, ?, ?, ?, ?, ?, ?)";
       connection.query(insertUserQuery, [ nama_user, no_hp, email_user, gender, ttl, pw_user, file_user ], (err, results) => {
           if (err) {
-            return res.status(500).json({ error: "Server Error" });
+            return res.status(500).json({ 
+              error: "Server Error", 
+              message: err
+            });
           }
           const payload = { userid_user: results.id_user, email_user };
           const token = jwt.sign(payload, secretKey);
