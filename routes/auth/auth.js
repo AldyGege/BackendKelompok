@@ -1,33 +1,14 @@
 const express = require("express");
+const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
-const multer = require('multer')
-const path = require('path')
-const router = express.Router();
+
 const connection = require("../../config/database");
 
 // Secret key untuk token JWT
 const secretKey = "kunciRahasiaYangSama";
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-      cb(null, 'public/image')
-  },
-  filename: (req, file, cb) => {
-      console.log(file)
-      cb(null, Date.now() + path.extname(file.originalname))
-  }
-})
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-      cb(null, true);
-  } else {
-      cb(new Error('Jenis File Tidak Diizinkan'), false)
-  }
-};
-const upload = multer({ storage: storage, fileFilter: fileFilter })
-
-router.post("/register", upload.single("file_user"),[
+router.post("/register",[
     body("nama_user").notEmpty().withMessage("Isi semua bidang"),
     body("no_hp").notEmpty().withMessage("Isi semua bidang"),
     body("email_user").notEmpty().withMessage("Isi semua bidang"),
@@ -40,7 +21,6 @@ router.post("/register", upload.single("file_user"),[
       return res.status(400).json({ error: errors.array() });
     }
     const { nama_user, no_hp, email_user, gender, ttl, pw_user } = req.body;
-    file_user = req.file.filename;
     const checkUserQuery = "SELECT * FROM user WHERE email_user = ?";
     connection.query(checkUserQuery, [email_user], (err, results) => {
       if (err) {
@@ -49,8 +29,8 @@ router.post("/register", upload.single("file_user"),[
       if (results.length > 0) {
         return res.status(409).json({ error: "Pengguna sudah terdaftar" });
       }
-      const insertUserQuery = "INSERT INTO user (nama_user, no_hp, email_user, gender, ttl, pw_user, file_user) VALUES (?, ?, ?, ?, ?, ?, ?)";
-      connection.query(insertUserQuery, [ nama_user, no_hp, email_user, gender, ttl, pw_user, file_user ], (err, results) => {
+      const insertUserQuery = "INSERT INTO user (nama_user, no_hp, email_user, gender, ttl, pw_user) VALUES (?, ?, ?, ?, ?, ?)";
+      connection.query(insertUserQuery, [ nama_user, no_hp, email_user, gender, ttl, pw_user], (err, results) => {
           if (err) {
             return res.status(500).json({ 
               error: "Server Error", 
