@@ -17,8 +17,8 @@ function authenticateToken(req, res, next) {
     if (err) {
       return res.status(403).json({ error: "Token tidak valid" });
     }
-    const { userId, username } = decoded;
-    req.user = { userId, username };
+    const { userId, email_user } = decoded;
+    req.user = { userId, email_user };
     next();
   });
 }
