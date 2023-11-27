@@ -61,7 +61,7 @@ router.post("/login", (req, res) => {
         return res.status(401).json({ error: "Gagal masuk" });
       }
       const user = results[0];
-      if (user.password !== pw_user) {
+      if (user.pw_user !== pw_user) {
         return res.status(401).json({ error: "Kata sandi salah" });
       }
       if (user.token) {
