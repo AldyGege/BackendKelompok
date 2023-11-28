@@ -8,6 +8,23 @@ const connection = require("../../config/database");
 // Secret key untuk token JWT
 const secretKey = "kunciRahasiaYangSama";
 
+router.get('/', function (req, res){
+    connection.query('select * from user order by id_user desc', function(err, rows){
+        if(err){
+            return res.status(500).json({
+                status: false,
+                message: 'Server Failed',
+            })
+        }else{
+            return res.status(200).json({
+                status:true,
+                message: 'Data user',
+                data: rows
+            })
+        }
+    })
+});
+
 router.post("/register",[
     body("nama_user").notEmpty().withMessage("Isi semua bidang"),
     body("no_hp").notEmpty().withMessage("Isi semua bidang"),
