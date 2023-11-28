@@ -27,7 +27,7 @@ const upload = multer({ storage: storage, fileFilter: fileFilter })
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
 
 router.get('/', authenticateToken ,function (req, res){
-    connection.query('SELECT b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter', function(err, rows){
+    connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter', function(err, rows){
         if(err){
             return res.status(500).json({
                 status: false,
