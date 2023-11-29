@@ -26,8 +26,8 @@ const upload = multer({ storage: storage, fileFilter: fileFilter })
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
 
-router.get('/', authenticateToken, function (req, res){
-    connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter', function(err, rows){
+router.get('/', authenticateToken,  function (req, res){
+    connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
         if(err){
             return res.status(500).json({
                 status: false,
@@ -45,6 +45,7 @@ router.get('/', authenticateToken, function (req, res){
 
 router.post('/store', authenticateToken,  upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
+    body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
     body('jenis_berita').notEmpty(),
     body('tgl_berita').notEmpty()
@@ -57,6 +58,7 @@ router.post('/store', authenticateToken,  upload.single("file_berita"), [
     }
     let Data = {
         id_presenter: req.body.id_presenter,
+        id_admin: req.body.id_admin,
         judul_berita: req.body.judul_berita,
         jenis_berita: req.body.jenis_berita,
         tgl_berita: req.body.tgl_berita,
@@ -105,6 +107,7 @@ router.get('/(:id)', authenticateToken,  function (req, res) {
 
 router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
+    body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
     body('jenis_berita').notEmpty(),
     body('tgl_berita').notEmpty()
@@ -139,10 +142,11 @@ router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
         }
     let Data = {
         id_presenter: req.body.id_presenter,
+        id_admin: req.body.id_admin,
         judul_berita: req.body.judul_berita,
         jenis_berita: req.body.jenis_berita,
         tgl_berita: req.body.tgl_berita,
-        file_berita: file_berita
+        file_berita: req.file.filename
     }
     connection.query(`update berita set ? where id_berita = ${id}`, Data, function (err, rows) {
         if(err){
