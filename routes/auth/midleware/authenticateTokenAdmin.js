@@ -18,7 +18,7 @@ const token = req.header("Authorization");
       return res.status(403).json({ error: "Token tidak valid" });
     }
     const { adminId, email_admin } = decoded;
-    req.admin = { adminId, email_admin };
+    req.user = { adminId, email_admin };
     next();
   });
 }
