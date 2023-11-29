@@ -26,7 +26,7 @@ const upload = multer({ storage: storage, fileFilter: fileFilter })
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
 
-router.get('/', authenticateToken ,function (req, res){
+router.get('/', authenticateToken, function (req, res){
     connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -43,7 +43,7 @@ router.get('/', authenticateToken ,function (req, res){
     })
 });
 
-router.post('/store', authenticateToken, upload.single("file_berita"), [
+router.post('/store', authenticateToken,  upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
     body('judul_berita').notEmpty(),
     body('jenis_berita').notEmpty(),
@@ -78,7 +78,7 @@ router.post('/store', authenticateToken, upload.single("file_berita"), [
     })
 });
 
-router.get('/(:id)', authenticateToken, function (req, res) {
+router.get('/(:id)', authenticateToken,  function (req, res) {
     let id = req.params.id;
     connection.query(`SELECT b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter where id_berita = ${id}`, function (err, rows) {
         if(err){
@@ -103,7 +103,7 @@ router.get('/(:id)', authenticateToken, function (req, res) {
     })
 });
 
-router.patch('/update/:id',authenticateToken,  upload.single("file_berita"), [
+router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
     body('judul_berita').notEmpty(),
     body('jenis_berita').notEmpty(),
@@ -161,7 +161,7 @@ router.patch('/update/:id',authenticateToken,  upload.single("file_berita"), [
 
 });
 
-router.delete('/delete/(:id)', authenticateToken, function(req, res) {
+router.delete('/delete/(:id)', authenticateToken,  function(req, res) {
     let id = req.params.id;
     connection.query(`delete from berita where id_berita = ${id}`, function(err, rows) {
         if(err){
