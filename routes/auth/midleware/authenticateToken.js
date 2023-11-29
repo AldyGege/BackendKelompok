@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const secretKey = "kunciRahasiaYangSama";
 function authenticateToken(req, res, next) {
-  const token = req.header("Authorization");
+const token = req.header("Authorization");
 
   if (!token) {
     return res.status(401).json({ error: "Akses ditolak, token tidak ada" });
