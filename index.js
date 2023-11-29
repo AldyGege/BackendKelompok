@@ -30,8 +30,8 @@ app.use('/api/saran', SaranRouter);
 const auth = require('./routes/auth/auth')
 app.use('/api/auth', auth);
 
-// const authadmin = require('./routes/auth/authadmin')
-// app.use('/api/authadmin', authadmin);
+const authadmin = require('./routes/auth/authadmin')
+app.use('/api/authadmin', authadmin);
 
 app.listen(port, () => {
     console.log(`aplikasi berjalan di http:://localhost:${port}`)
