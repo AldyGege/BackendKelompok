@@ -25,8 +25,25 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+const authenticateTokenAdmin = require('../routes/auth/midleware/authenticateTokenAdmin')
 
 router.get('/', authenticateToken,  function (req, res){
+    connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.deskripsi, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
+        if(err){
+            return res.status(500).json({
+                status: false,
+                message: 'Server Failed',
+            })
+        }else{
+            return res.status(200).json({
+                status:true,
+                message: 'Data Berita',
+                data: rows
+            })
+        }
+    })
+});
+router.get('/', authenticateTokenAdmin,  function (req, res){
     connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.deskripsi, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
         if(err){
             return res.status(500).json({
