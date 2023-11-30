@@ -27,7 +27,7 @@ const upload = multer({ storage: storage, fileFilter: fileFilter })
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
 
 router.get('/', authenticateToken,  function (req, res){
-    connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
+    connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.deskripsi, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
         if(err){
             return res.status(500).json({
                 status: false,
@@ -48,7 +48,8 @@ router.post('/store', authenticateToken,  upload.single("file_berita"), [
     body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
     body('jenis_berita').notEmpty(),
-    body('tgl_berita').notEmpty()
+    body('tgl_berita').notEmpty(),
+    body('deskripsi').notEmpty()
 ],(req, res) => {
     const error = validationResult(req);
     if(!error.isEmpty()){
@@ -62,6 +63,7 @@ router.post('/store', authenticateToken,  upload.single("file_berita"), [
         judul_berita: req.body.judul_berita,
         jenis_berita: req.body.jenis_berita,
         tgl_berita: req.body.tgl_berita,
+        deskripsi: req.body.deskripsi,
         file_berita: req.file.filename
     }
     connection.query('insert into berita set ?', Data, function(err, rows){
@@ -82,7 +84,7 @@ router.post('/store', authenticateToken,  upload.single("file_berita"), [
 
 router.get('/(:id)', authenticateToken,  function (req, res) {
     let id = req.params.id;
-    connection.query(`SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin where id_berita = ${id}`, function (err, rows) {
+    connection.query(`SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.deskripsi, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin where id_berita = ${id}`, function (err, rows) {
         if(err){
             return res.status(500).json({
                 status: false,
@@ -110,7 +112,8 @@ router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
     body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
     body('jenis_berita').notEmpty(),
-    body('tgl_berita').notEmpty()
+    body('tgl_berita').notEmpty(),
+    body('deskripsi').notEmpty()
 ], (req, res) => {
     const error = validationResult(req);
     if(!error.isEmpty()){
@@ -146,6 +149,7 @@ router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
         judul_berita: req.body.judul_berita,
         jenis_berita: req.body.jenis_berita,
         tgl_berita: req.body.tgl_berita,
+        deskripsi: req.body.deskripsi,
         file_berita: req.file.filename
     }
     connection.query(`update berita set ? where id_berita = ${id}`, Data, function (err, rows) {
