@@ -4,8 +4,25 @@ const {body, validationResult} = require('express-validator');
 const connection = require('../config/database');
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+const authenticateTokenAdmin = require('../routes/auth/midleware/authenticateTokenAdmin')
 
 router.get('/', authenticateToken, function (req, res){
+    connection.query('SELECT s.id_saran, s.isi_saran, s.id_user, u.nama_user FROM saran s JOIN user u ON s.id_user = u.id_user', function(err, rows){
+        if(err){
+            return res.status(500).json({
+                status: false,
+                message: 'Server Failed',
+            })
+        }else{
+            return res.status(200).json({
+                status:true,
+                message: 'Data Saran',
+                data: rows
+            })
+        }
+    })
+});
+router.get('/admin', authenticateTokenAdmin, function (req, res){
     connection.query('SELECT s.id_saran, s.isi_saran, s.id_user, u.nama_user FROM saran s JOIN user u ON s.id_user = u.id_user', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -78,7 +95,7 @@ router.get('/(:id)', authenticateToken, function (req, res) {
     })
 });
 
-router.patch('/update/:id', authenticateToken, [
+router.patch('/update/:id', authenticateTokenAdmin, [
     body('id_user').notEmpty(),
     body('isi_saran').notEmpty()
 ], (req, res) => {
@@ -108,7 +125,7 @@ router.patch('/update/:id', authenticateToken, [
     })
 });
 
-router.delete('/delete/(:id)', authenticateToken, function(req, res) {
+router.delete('/delete/(:id)', authenticateTokenAdmin, function(req, res) {
     let id = req.params.id;
     connection.query(`delete from saran where id_saran = ${id}`, function(err, rows) {
         if(err){

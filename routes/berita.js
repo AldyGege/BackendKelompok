@@ -43,7 +43,7 @@ router.get('/', authenticateToken,  function (req, res){
         }
     })
 });
-router.get('/', authenticateTokenAdmin,  function (req, res){
+router.get('/beritaA', authenticateTokenAdmin,  function (req, res){
     connection.query('SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.deskripsi, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin', function(err, rows){
         if(err){
             return res.status(500).json({
@@ -60,7 +60,7 @@ router.get('/', authenticateTokenAdmin,  function (req, res){
     })
 });
 
-router.post('/store', authenticateToken,  upload.single("file_berita"), [
+router.post('/store', authenticateTokenAdmin,  upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
     body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
@@ -99,7 +99,7 @@ router.post('/store', authenticateToken,  upload.single("file_berita"), [
     })
 });
 
-router.get('/(:id)', authenticateToken,  function (req, res) {
+router.get('/(:id)', authenticateTokenAdmin,  function (req, res) {
     let id = req.params.id;
     connection.query(`SELECT b.id_berita, b.judul_berita, b.jenis_berita, b.tgl_berita, b.deskripsi, b.file_berita, p.nama_presenter, a.nama_admin FROM berita b JOIN presenter p ON b.id_presenter = p.id_presenter JOIN admin a ON b.id_admin = a.id_admin where id_berita = ${id}`, function (err, rows) {
         if(err){
@@ -124,7 +124,7 @@ router.get('/(:id)', authenticateToken,  function (req, res) {
     })
 });
 
-router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
+router.patch('/update/:id',authenticateTokenAdmin,   upload.single("file_berita"), [
     body('id_presenter').notEmpty(),
     body('id_admin').notEmpty(),
     body('judul_berita').notEmpty(),
@@ -186,7 +186,7 @@ router.patch('/update/:id',authenticateToken,   upload.single("file_berita"), [
 
 });
 
-router.delete('/delete/(:id)', authenticateToken,  function(req, res) {
+router.delete('/delete/(:id)', authenticateTokenAdmin,  function(req, res) {
     let id = req.params.id;
     connection.query(`delete from berita where id_berita = ${id}`, function(err, rows) {
         if(err){

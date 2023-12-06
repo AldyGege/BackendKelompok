@@ -25,8 +25,25 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
 const authenticateToken = require('../routes/auth/midleware/authenticateToken')
+const authenticateTokenAdmin = require('../routes/auth/midleware/authenticateTokenAdmin')
 
 router.get('/', authenticateToken, function (req, res){
+    connection.query('select * from presenter order by id_presenter desc', function(err, rows){
+        if(err){
+            return res.status(500).json({
+                status: false,
+                message: 'Server Failed',
+            })
+        }else{
+            return res.status(200).json({
+                status:true,
+                message: 'Data Presenter',
+                data: rows
+            })
+        }
+    })
+});
+router.get('/admin', authenticateTokenAdmin, function (req, res){
     connection.query('select * from presenter order by id_presenter desc', function(err, rows){
         if(err){
             return res.status(500).json({
